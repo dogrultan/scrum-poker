@@ -237,7 +237,7 @@ class ViewPlanningAsScrumMaster extends Component {
             {selected ? (
               <VoterWrapper>
                 <P>Scrum Master:</P>
-                <P>{votingFinished ? selected : 'Voted'}</P>
+                <P>{votingFinished ? selected : VOTED}</P>
               </VoterWrapper>
             ) : (
               <VoterWrapper>
