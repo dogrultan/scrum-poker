@@ -14,6 +14,15 @@ const Rectangle = styled.div`
   outline: none;
   font-size: 24px;
   font-weight: 600;
+  user-select: none;
+`;
+
+const SmallRectangle = styled(Rectangle)`
+  border: 1px solid ${props => props.selected && 'lightgreen'};
+  width: 20px;
+  height: 20px;
 `;
 
 export default Rectangle;
+
+export { SmallRectangle };

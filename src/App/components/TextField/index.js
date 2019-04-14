@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Label from '../Label';
+
 import Wrapper from './Wrapper';
-import Label from './Label';
 import InputGroup from './InputGroup';
 
 class TextField extends React.Component {
@@ -18,11 +19,7 @@ class TextField extends React.Component {
 
     return (
       <Wrapper className={className}>
-        {label && (
-          <Label htmlFor={name}>
-            {label}
-          </Label>
-        )}
+        {label && <Label htmlFor={name}>{label}</Label>}
         <InputGroup name={name} {...restOf} />
         {errorText && errorText}
       </Wrapper>
@@ -35,7 +32,7 @@ TextField.propTypes = {
   label: PropTypes.string,
   labelInfo: PropTypes.string,
   errorText: PropTypes.string,
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 export default TextField;

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home/index';
 import AddStoryList from './pages/AddStoryList/index';
+import ViewPlanningAsDeveloper from './pages/ViewPlanningAsDeveloper/index';
 import ViewPlanningAsScrumMaster from './pages/ViewPlanningAsScrumMaster/index';
+import SubmitDeveloperId from './pages/SubmitDeveloperId/index';
 
 class App extends Component {
   render() {
@@ -18,6 +20,14 @@ class App extends Component {
           <Route
             path='/poker-planning-view-as-scrum-master/:sessionName'
             component={ViewPlanningAsScrumMaster}
+          />
+          <Route
+            path='/poker-planning-view-as-developer/:sessionName/developers/:id'
+            component={ViewPlanningAsDeveloper}
+          />
+          <Route
+            path='/poker-planning-view-as-developer/:sessionName'
+            component={SubmitDeveloperId}
           />
         </Switch>
       </div>

@@ -6,6 +6,7 @@ import PageLayout from '../../components/PageLayout';
 import TextField from '../../components/TextField';
 import P from '../../components/P';
 import Button from '../../components/Button';
+import { ACTIVE, NOT_VOTED } from '../../common/storyStatus';
 import TextFieldWrapper from './TextFieldWrapper';
 import ButtonWrapper from './ButtonWrapper';
 
@@ -22,15 +23,24 @@ class AddStoryList extends Component {
     this.routeChange = this.routeChange.bind(this);
   }
 
+  initializeData(splittedStoryList) {
+    return splittedStoryList.map((story, i) => {
+      return {
+        story: story,
+        storyPoint: '',
+        status: i === 0 ? ACTIVE : NOT_VOTED
+      };
+    });
+  }
+
   routeChange() {
     const { sessionName, numberOfVoters, storyList } = this.state;
+    const splittedStoryList = storyList.split(/\r?\n/);
+    const data = this.initializeData(splittedStoryList);
     const path = `poker-planning-view-as-scrum-master/${sessionName}`;
     this.props.history.push({
       pathname: path,
-      state: {
-        storyList,
-        numberOfVoters
-      }
+      state: { data, numberOfVoters, sessionName }
     });
   }
 
