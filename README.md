@@ -6,6 +6,10 @@ This is a React.js + Express.js Scrum Poker Planning web application, that allow
 
 In the project directory, you can run:
 
+### `npm install`
+
+This command installs required node packages for the application to run, listed in `package.json`.
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
