@@ -11,6 +11,7 @@ import Table from '../../components/Table';
 import P from '../../components/P';
 import Button from '../../components/Button';
 import dayList from '../../common/dayList';
+import columns from '../../common/columns';
 import { ACTIVE, VOTED, NOT_VOTED } from '../../common/storyStatus';
 
 import BodyWrapper from './BodyWrapper';
@@ -181,7 +182,8 @@ class ViewPlanningAsScrumMaster extends Component {
   }
 
   getActiveStory(data) {
-    return data.find(obj => obj.status === ACTIVE).story;
+    const active = data.find(obj => obj.status === ACTIVE);
+    return active ? active.story : data[data.length - 1].story;
   }
 
   render() {
@@ -191,20 +193,6 @@ class ViewPlanningAsScrumMaster extends Component {
     const activeStory = this.getActiveStory(
       currentData.length ? currentData : data
     );
-    const columns = [
-      {
-        Header: 'Story',
-        accessor: 'story'
-      },
-      {
-        Header: 'Story Point',
-        accessor: 'storyPoint'
-      },
-      {
-        Header: 'Status',
-        accessor: 'status'
-      }
-    ];
     return (
       <PageLayout>
         <Header>
@@ -218,7 +206,11 @@ class ViewPlanningAsScrumMaster extends Component {
         <BodyWrapper>
           <LabelWrapper>
             <Label>Story List</Label>
-            <Table data={currentData} columns={columns} />
+            <Table
+              data={currentData}
+              resolveData={data => data.map(row => row)}
+              columns={columns}
+            />
           </LabelWrapper>
           <LabelWrapper>
             <Label>Active Story</Label>

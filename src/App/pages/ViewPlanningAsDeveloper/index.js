@@ -62,7 +62,8 @@ class ViewPlanningAsDeveloper extends Component {
   }
 
   getActiveStory(data) {
-    return data.find(obj => obj.status === ACTIVE).story;
+    const active = data.find(obj => obj.status === ACTIVE);
+    return active ? active.story : data[data.length - 1].story;
   }
 
   render() {
@@ -81,6 +82,7 @@ class ViewPlanningAsDeveloper extends Component {
             <Table
               style={{ width: '900px' }}
               data={currentStoryList}
+              resolveData={data => data.map(row => row)}
               columns={columns}
             />
           </LabelWrapper>

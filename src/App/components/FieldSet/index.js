@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 const FieldSet = styled.fieldset`
   width: 500px;
-  height: 100%;
+  height: 450px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  flex-direction: column;
   padding: 24px;
 `;
 

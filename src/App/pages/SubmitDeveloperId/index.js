@@ -56,7 +56,7 @@ class SubmitDeveloperId extends Component {
             name='id'
             width='600px'
             margin='0 18px 0 0'
-            label='Enter developer ID'
+            label='Enter developer (voter) ID'
             value={id}
             onChange={this.onTextChange}
           />
