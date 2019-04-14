@@ -11,7 +11,7 @@ import Table from '../../components/Table';
 import P from '../../components/P';
 import Button from '../../components/Button';
 import dayList from '../../common/dayList';
-import { ACTIVE, NOT_VOTED } from '../../common/storyStatus';
+import { ACTIVE, VOTED, NOT_VOTED } from '../../common/storyStatus';
 
 import BodyWrapper from './BodyWrapper';
 import BottomWrapper from './BottomWrapper';
@@ -28,10 +28,18 @@ class ViewPlanningAsScrumMaster extends Component {
     this.state = {
       selected: null,
       votingFinished: false,
-      data: [],
-      voteMapping: []
+      currentData: [],
+      voteMapping: [],
+      finalScore: ''
     };
     this.handleSelect = this.handleSelect.bind(this);
+    this.handleFinalScore = this.handleFinalScore.bind(this);
+    this.handleEndVote = this.handleEndVote.bind(this);
+  }
+
+  handleFinalScore(event) {
+    const { value, name } = event.target;
+    this.setState({ [name]: value });
   }
 
   isVotesEqual() {
@@ -69,8 +77,8 @@ class ViewPlanningAsScrumMaster extends Component {
             <P>Voter {i}:</P>
             <P>
               {this.state.voteMapping.find(obj => parseInt(obj.id) === i)
-                ? 'Voted'
-                : 'Not Voted'}
+                ? VOTED
+                : NOT_VOTED}
             </P>
           </VoterWrapper>
         );
@@ -85,7 +93,7 @@ class ViewPlanningAsScrumMaster extends Component {
     return (
       voteMapping.every(obj => obj.id >= 1 && obj.id <= numberOfVoters) &&
       voteMapping.length === parseInt(numberOfVoters) &&
-      selected
+      !!selected
     );
   }
 
@@ -95,9 +103,7 @@ class ViewPlanningAsScrumMaster extends Component {
     try {
       fetch(`/poker-planning-view-as-developer/${sessionURI}`, {
         method: 'POST',
-        body: JSON.stringify({
-          data
-        }),
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -107,9 +113,9 @@ class ViewPlanningAsScrumMaster extends Component {
         const res = await fetch(
           `/poker-planning-view-as-scrum-master/${sessionURI}`
         );
-        const data = await res.json();
+        const currentData = await res.json();
 
-        this.setState({ data });
+        this.setState({ currentData });
       }, 2000);
       setInterval(async () => {
         const res = await fetch(`/vote-mapping`);
@@ -122,7 +128,52 @@ class ViewPlanningAsScrumMaster extends Component {
     }
   }
 
-  handleEndVote(e) {}
+  handleEndVote(event) {
+    const { sessionName } = this.props.location.state;
+    const { finalScore, currentData } = this.state;
+    if (finalScore) {
+      let nextActiveStoryIndex = null;
+      const nextState = currentData.map((obj, i) => {
+        if (obj.status === ACTIVE) {
+          nextActiveStoryIndex = i + 1;
+          return {
+            story: obj.story,
+            storyPoint: finalScore,
+            status: VOTED
+          };
+        } else if (i === nextActiveStoryIndex) {
+          return {
+            story: obj.story,
+            storyPoint: obj.storyPoint,
+            status: ACTIVE
+          };
+        }
+        return {
+          story: obj.story,
+          storyPoint: obj.storyPoint,
+          status: obj.status
+        };
+      });
+      const sessionURI = encodeURI(sessionName);
+      try {
+        fetch(`/poker-planning-view-as-scrum-master/${sessionURI}`, {
+          method: 'POST',
+          body: JSON.stringify(nextState),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        this.setState({
+          currentData: nextState,
+          votingFinished: false,
+          selected: null,
+          finalScore: ''
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
   handleSelect(e) {
     const selected = e.currentTarget.textContent;
@@ -133,23 +184,13 @@ class ViewPlanningAsScrumMaster extends Component {
     return data.find(obj => obj.status === ACTIVE).story;
   }
 
-  initializeData(splittedStoryList) {
-    const initialData = splittedStoryList.map((story, i) => {
-      return {
-        story: story,
-        storyPoint: '',
-        status: i === 0 ? ACTIVE : NOT_VOTED
-      };
-    });
-    this.setState({ data: initialData });
-    return initialData;
-  }
-
   render() {
     const { data, sessionName } = this.props.location.state;
-    const { selected, votingFinished } = this.state;
+    const { currentData, selected, votingFinished, finalScore } = this.state;
 
-    const activeStory = this.getActiveStory(data);
+    const activeStory = this.getActiveStory(
+      currentData.length ? currentData : data
+    );
     const columns = [
       {
         Header: 'Story',
@@ -164,7 +205,6 @@ class ViewPlanningAsScrumMaster extends Component {
         accessor: 'status'
       }
     ];
-    this.isVotesEqual();
     return (
       <PageLayout>
         <Header>
@@ -178,7 +218,7 @@ class ViewPlanningAsScrumMaster extends Component {
         <BodyWrapper>
           <LabelWrapper>
             <Label>Story List</Label>
-            <Table data={data} columns={columns} />
+            <Table data={currentData} columns={columns} />
           </LabelWrapper>
           <LabelWrapper>
             <Label>Active Story</Label>
@@ -223,7 +263,12 @@ class ViewPlanningAsScrumMaster extends Component {
               {votingFinished && selected && (
                 <React.Fragment>
                   <P>Final Score</P>
-                  <FinalScore width='100px' />
+                  <FinalScore
+                    width='100px'
+                    name='finalScore'
+                    value={finalScore}
+                    onChange={this.handleFinalScore}
+                  />
                 </React.Fragment>
               )}
               <Button disabled={!votingFinished} onClick={this.handleEndVote}>

@@ -10,7 +10,8 @@ import Label from '../../components/Label';
 import Table from '../../components/Table';
 import P from '../../components/P';
 import dayList from '../../common/dayList';
-import { ACTIVE, NOT_VOTED } from '../../common/storyStatus';
+import columns from '../../common/columns';
+import { ACTIVE } from '../../common/storyStatus';
 
 import BodyWrapper from './BodyWrapper';
 import LabelWrapper from './LabelWrapper';
@@ -20,14 +21,28 @@ class ViewPlanningAsDeveloper extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: null
+      selected: null,
+      currentStoryList: []
     };
 
     this.handleSelect = this.handleSelect.bind(this);
   }
 
+  async componentDidMount() {
+    try {
+      setInterval(async () => {
+        const res = await fetch(`${encodeURI(this.props.match.url)}`);
+        const currentStoryList = await res.json();
+
+        this.setState({ currentStoryList });
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   handleSelect(e) {
-    const { id, storyList } = this.props.location.state;
+    const { id } = this.props.location.state;
     const selected = e.currentTarget.textContent;
     this.setState({ selected });
     try {
@@ -50,41 +65,24 @@ class ViewPlanningAsDeveloper extends Component {
     return data.find(obj => obj.status === ACTIVE).story;
   }
 
-  initializeData(splittedStoryList) {
-    return splittedStoryList.map((story, i) => {
-      return {
-        story: story,
-        storyPoint: '',
-        status: i === 0 ? ACTIVE : NOT_VOTED
-      };
-    });
-  }
-
   render() {
     const { storyList } = this.props.location.state;
-    const activeStory = this.getActiveStory(storyList);
+    const { currentStoryList } = this.state;
+    const activeStory = this.getActiveStory(
+      currentStoryList.length ? currentStoryList : storyList
+    );
     const { selected } = this.state;
-    const columns = [
-      {
-        Header: 'Story',
-        accessor: 'story'
-      },
-      {
-        Header: 'Story Point',
-        accessor: 'storyPoint'
-      },
-      {
-        Header: 'Status',
-        accessor: 'status'
-      }
-    ];
     return (
       <PageLayout>
         <Rectangle>Scrum Poker</Rectangle>
         <BodyWrapper>
           <LabelWrapper>
             <Label>Story List</Label>
-            <Table data={storyList} columns={columns} />
+            <Table
+              style={{ width: '900px' }}
+              data={currentStoryList}
+              columns={columns}
+            />
           </LabelWrapper>
           <LabelWrapper>
             <Label>Active Story</Label>

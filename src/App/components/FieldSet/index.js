@@ -2,9 +2,11 @@ import styled from 'styled-components';
 
 const FieldSet = styled.fieldset`
   width: 500px;
+  height: 100%;
   display: flex;
   align-items: center;
-  padding: 24px 0 24px 0;
+  justify-content: center;
+  padding: 24px;
 `;
 
 export default FieldSet;

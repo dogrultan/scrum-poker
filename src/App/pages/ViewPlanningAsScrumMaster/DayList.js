@@ -4,7 +4,8 @@ const DayList = styled.div`
   width: 300px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  align-content: center;
+  justify-content: space-around;
   flex-wrap: wrap;
   margin: 0 auto;
 `;

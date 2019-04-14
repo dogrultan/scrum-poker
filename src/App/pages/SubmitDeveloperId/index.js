@@ -23,7 +23,7 @@ class SubmitDeveloperId extends Component {
     fetch(`${encodeURI(this.props.match.url)}`)
       .then(res => res.json())
       .then(list => {
-        this.setState({ storyList: list.data });
+        this.setState({ storyList: list });
       });
   }
 
@@ -55,6 +55,7 @@ class SubmitDeveloperId extends Component {
           <TextField
             name='id'
             width='600px'
+            margin='0 18px 0 0'
             label='Enter developer ID'
             value={id}
             onChange={this.onTextChange}

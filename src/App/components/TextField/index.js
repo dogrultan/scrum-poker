@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Label from '../Label';
 
@@ -26,13 +25,5 @@ class TextField extends React.Component {
     );
   }
 }
-
-TextField.propTypes = {
-  name: PropTypes.string,
-  label: PropTypes.string,
-  labelInfo: PropTypes.string,
-  errorText: PropTypes.string,
-  className: PropTypes.string
-};
 
 export default TextField;
