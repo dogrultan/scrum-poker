@@ -69,9 +69,8 @@ class ViewPlanningAsDeveloper extends Component {
   render() {
     const { storyList } = this.props.location.state;
     const { currentStoryList } = this.state;
-    const activeStory = this.getActiveStory(
-      currentStoryList.length ? currentStoryList : storyList
-    );
+    const data = currentStoryList.length ? currentStoryList : storyList;
+    const activeStory = this.getActiveStory(data);
     const { selected } = this.state;
     return (
       <PageLayout>
@@ -84,6 +83,8 @@ class ViewPlanningAsDeveloper extends Component {
               data={currentStoryList}
               resolveData={data => data.map(row => row)}
               columns={columns}
+              loading={!currentStoryList.length}
+              NoDataComponent={() => null}
             />
           </LabelWrapper>
           <LabelWrapper>

@@ -189,10 +189,9 @@ class ViewPlanningAsScrumMaster extends Component {
   render() {
     const { data, sessionName } = this.props.location.state;
     const { currentData, selected, votingFinished, finalScore } = this.state;
+    const storyList = currentData.length ? currentData : data;
 
-    const activeStory = this.getActiveStory(
-      currentData.length ? currentData : data
-    );
+    const activeStory = this.getActiveStory(storyList);
     return (
       <PageLayout>
         <Header>
@@ -210,6 +209,8 @@ class ViewPlanningAsScrumMaster extends Component {
               data={currentData}
               resolveData={data => data.map(row => row)}
               columns={columns}
+              loading={!currentData.length}
+              NoDataComponent={() => null}
             />
           </LabelWrapper>
           <LabelWrapper>
