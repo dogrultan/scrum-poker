@@ -58,6 +58,7 @@ class ViewPlanningAsScrumMaster extends Component {
     const { numberOfVoters } = this.props.location.state;
     const voters = [];
     if (this.state.votingFinished) {
+      // If voting is finished, display each vote as numbers
       for (let i = 1; i <= numberOfVoters; i++) {
         voters.push(
           <VoterWrapper key={i}>
@@ -91,6 +92,7 @@ class ViewPlanningAsScrumMaster extends Component {
   isVotingFinished() {
     const { numberOfVoters } = this.props.location.state;
     const { voteMapping, selected } = this.state;
+    // Check if voter ids are in range 1 and numberOfVoters and Scrum Master also voted
     return (
       voteMapping.every(obj => obj.id >= 1 && obj.id <= numberOfVoters) &&
       voteMapping.length === parseInt(numberOfVoters) &&
@@ -110,6 +112,7 @@ class ViewPlanningAsScrumMaster extends Component {
         }
       });
 
+      // Refresh current story list every 2 seconds
       setInterval(async () => {
         const res = await fetch(
           `/poker-planning-view-as-scrum-master/${sessionURI}`
@@ -118,6 +121,7 @@ class ViewPlanningAsScrumMaster extends Component {
 
         this.setState({ currentData });
       }, 2000);
+      // Get votes every 2 seconds
       setInterval(async () => {
         const res = await fetch(`/vote-mapping`);
         const voteMapping = await res.json();
@@ -136,6 +140,7 @@ class ViewPlanningAsScrumMaster extends Component {
       let nextActiveStoryIndex = null;
       const nextState = currentData.map((obj, i) => {
         if (obj.status === ACTIVE) {
+          // Change current ACTIVE story to VOTED
           nextActiveStoryIndex = i + 1;
           return {
             story: obj.story,
@@ -143,6 +148,7 @@ class ViewPlanningAsScrumMaster extends Component {
             status: VOTED
           };
         } else if (i === nextActiveStoryIndex) {
+          // Make the story coming after VOTED one ACTIVE
           return {
             story: obj.story,
             storyPoint: obj.storyPoint,
@@ -183,6 +189,7 @@ class ViewPlanningAsScrumMaster extends Component {
 
   getActiveStory(data) {
     const active = data.find(obj => obj.status === ACTIVE);
+    // Get active story if available, return last story if all stories are voted
     return active ? active.story : data[data.length - 1].story;
   }
 

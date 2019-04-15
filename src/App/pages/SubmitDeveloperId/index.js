@@ -20,6 +20,7 @@ class SubmitDeveloperId extends Component {
   }
 
   componentDidMount() {
+    // Get current story list
     fetch(`${encodeURI(this.props.match.url)}`)
       .then(res => res.json())
       .then(list => {
@@ -31,6 +32,7 @@ class SubmitDeveloperId extends Component {
     const { id, storyList } = this.state;
     const base = encodeURI(this.props.match.url);
     const path = `${base}/developers/${id}`;
+    // Propagate current story list to developer voting page
     this.props.history.push({
       pathname: path,
       state: {

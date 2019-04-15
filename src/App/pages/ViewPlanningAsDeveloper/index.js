@@ -30,6 +30,7 @@ class ViewPlanningAsDeveloper extends Component {
 
   async componentDidMount() {
     try {
+      // Get current story list every 2 seconds
       setInterval(async () => {
         const res = await fetch(`${encodeURI(this.props.match.url)}`);
         const currentStoryList = await res.json();
@@ -45,6 +46,7 @@ class ViewPlanningAsDeveloper extends Component {
     const { id } = this.props.location.state;
     const selected = e.currentTarget.textContent;
     this.setState({ selected });
+    // Post voter id and selected day on selection
     try {
       fetch(`${encodeURI(this.props.match.url)}`, {
         method: 'POST',

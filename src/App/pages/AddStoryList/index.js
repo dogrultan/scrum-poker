@@ -35,6 +35,7 @@ class AddStoryList extends Component {
 
   routeChange() {
     const { sessionName, numberOfVoters, storyList } = this.state;
+    // Split story list from new line
     const splittedStoryList = storyList.split(/\r?\n/);
     const data = this.initializeData(splittedStoryList);
     const path = `poker-planning-view-as-scrum-master/${sessionName}`;
